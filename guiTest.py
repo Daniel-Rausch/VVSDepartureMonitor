@@ -1,12 +1,9 @@
 #coding: utf-8
 import sys
-from PyQt5.QtCore import QUrl, Qt, pyqtSlot, QObject
+from PyQt5.QtCore import QUrl, Qt, pyqtSlot, QObject, QThread
 from PyQt5.QtWidgets import QApplication
 from PyQt5.QtQml import QQmlApplicationEngine
 from PyQt5 import QtQuick
-
-from threading import Thread
-from time import sleep
 
 class QmlAusgabe(object):
     def __init__(self, pathToQmlFile="guiTest.qml"):
@@ -20,22 +17,42 @@ class QmlAusgabe(object):
         self.__rectangle1 = self.__appWindow.findChild(QObject, "Rectangle1")
         self.__rectangle2 = self.__appWindow.findChild(QObject, "Rectangle2")
 
+        self.__colorState = False
+
     def changeColor(self):
-        self.__rectangle1.setProperty("color", "yellow")
-        self.__rectangle2.setProperty("color", "blue")
+        if self.__colorState:
+            self.__rectangle1.setProperty("color", "red")
+            self.__rectangle2.setProperty("color", "green")
+        else:
+            self.__rectangle1.setProperty("color", "yellow")
+            self.__rectangle2.setProperty("color", "blue")
+        self.__colorState = not self.__colorState
 
     def show(self):
         self.__appWindow.show()
 
+
+
+class Controller(QThread):
+    def __init__(self, windowObject):
+        super().__init__()
+        self.__window = windowObject
+
+    def run(self):
+        while True:
+            self.sleep(1)
+            self.__window.changeColor()
+        
+
+
+
 if __name__ == "__main__":
     appQueue = QApplication(sys.argv)
     qdm = QmlAusgabe()
-    qdm.show()
-    #sys.exit(appQueue.exec_())
 
-    t = Thread(target=appQueue.exec_, args=())
-    t.start()
-    sleep(5)
-    qdm.changeColor()
-    input()
+    thread = Controller(qdm)
+    thread.start()
+    
+    qdm.show()
+    sys.exit(appQueue.exec_())
     
