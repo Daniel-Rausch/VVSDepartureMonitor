@@ -6,8 +6,10 @@ import time
 
 
 
-connectionsData= {'X60UniToLeo': ['5006021', 'X60', 'Leonberg Bf'],
-          '92UniToLeo': ['5006008', '92', 'Rotebühlplatz']}
+connectionsData= {
+    'X60UniToLeo': ['5006021', 'X60', 'Leonberg Bf'],
+    '92UniToLeo': ['5006008', '92', 'Rotebühlplatz']
+    }
 
 
 class NoVVSConnectionFoundError(Exception):
