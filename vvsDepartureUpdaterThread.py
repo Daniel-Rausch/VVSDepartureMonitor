@@ -69,6 +69,17 @@ class VVSConnectionUpdater(QThread, QObject):
             
             self.updated.emit()
             self.sleep(difference)
+        
+
+    def getTimeToNextUpdateAsPercent(self):
+        currentTime = time.time()
+        percentage = (self.__nextUpdate - currentTime)/self.__updateDelay
+        if percentage > 1:
+            return 1.0
+        elif percentage < 0:
+            return 0.0
+        else:
+            return percentage
 
 
     def getNextConnection(self):
@@ -81,15 +92,19 @@ class VVSConnectionUpdater(QThread, QObject):
         return self.__cachedConnection
 
 
-    def getTimeToNextUpdateAsPercent(self):
-        currentTime = time.time()
-        percentage = (self.__nextUpdate - currentTime)/self.__updateDelay
-        if percentage > 1:
-            return 1.0
-        elif percentage < 0:
-            return 0.0
-        else:
-            return percentage
+    def getNextConnectionDepartureDate(self):
+        return self.getNextConnection().getDepartureDateAsString()
+
+
+    def getNextConnectionDepartureTime(self):
+        return self.getNextConnection().getDepartureTimeAsString()
+
+
+    def getNextConnectionMinutesToDeparture(self):
+        return self.getNextConnection().getMinutesToDeparture()
+
+
+
 
 
 
@@ -104,3 +119,6 @@ if __name__ == '__main__':
     print(test.getTimeToNextUpdateAsPercent())
     test.wait()
     print(test.getNextConnection())
+    print(test.getNextConnectionDepartureDate())
+    print(test.getNextConnectionDepartureTime())
+    print(test.getNextConnectionMinutesToDeparture())

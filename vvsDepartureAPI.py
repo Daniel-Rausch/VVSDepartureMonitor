@@ -39,14 +39,19 @@ class VVSConnection:
         output = ('Line: ' + self.line + "  |  " +
                   'Station: ' + self.station + "  |  " +
                   'Direction: ' + self.direction + "  |  " +
-                  'Departure: ' + self.getDepartureAsString() + "  |  " +
+                  'Departure: ' + self.getDepartureDateAsString() + "  |  " +
                   'Delay: ' + str(self.delay))
         return output
 
 
 
-    def getDepartureAsString(self):
+    def getDepartureDateAsString(self):
         return self.departure.strftime("%Y-%m-%d %H:%M:%S")
+
+
+
+    def getDepartureTimeAsString(self):
+        return self.departure.strftime("%H:%M:%S")
 
 
 
