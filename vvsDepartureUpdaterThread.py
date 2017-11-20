@@ -14,14 +14,18 @@ class VVSConnectionUpdater(QThread, QObject):
 
     updated = pyqtSignal()
 
-    #updateDelay = number of seconds until next data retrieval
-    #errorDelay = Number of subsequently failed updates until an error is forwarded. Until that number is reached, the last connection that was successfully retrieved is forwarded instead.
-    def __init__(self, station, line, direction, updateDelay=15, errorDelay=4):
+    #syncrhonized: if set to true, then all threads with the same update delay will update at the same time
+    #updateDelay: number of seconds until next data retrieval
+    #minUpdateDelay: Only used if synchronized. Sync might result in an update that is scheduled immediately after the previous one, even for large updateDelay values. This forces a minimum wait time.
+    #errorDelay: Number of subsequently failed updates until an error is forwarded. Until that number is reached, the last connection that was successfully retrieved is forwarded instead.
+    def __init__(self, station, line, direction, synchronized=True, updateDelay=15, minUpdateDelay=1, errorDelay=4):
         super().__init__()
         self.__station = station
         self.__line = line
         self.__direction = direction
+        self.__synchronized = synchronized
         self.__updateDelay = updateDelay
+        self.__minUpdateDelay = minUpdateDelay
         self.__errorDelay = errorDelay
 
         self.__halt = False
@@ -31,8 +35,11 @@ class VVSConnectionUpdater(QThread, QObject):
         self.__continuousInternetConErrors = 0
 
         currentTime = int(time.time())
-        difference = updateDelay - currentTime%updateDelay
-        self.__nextUpdate = currentTime + difference
+        if synchronized:
+            difference =  currentTime % self.__updateDelay
+            self.__nextUpdate = currentTime - difference + self.__updateDelay
+        else:
+            self.__nextUpdate = currentTime + self.__updateDelay
 
 
     def stop(self):
@@ -63,12 +70,21 @@ class VVSConnectionUpdater(QThread, QObject):
                 self.__errorCount = 0
                 self.__continuousInternetConErrors = 0
 
+
+            #Compute next update and sleep
+
             currentTime = int(time.time())
-            difference = self.__updateDelay - currentTime%self.__updateDelay
-            self.__nextUpdate = currentTime + difference
+            sleepTime = 0
+            if self.__synchronized:
+                sleepTime = self.__updateDelay - currentTime % self.__updateDelay
+                if sleepTime < self.__minUpdateDelay :
+                    sleepTime += self.__updateDelay
+            else:
+                sleepTime = self.__updateDelay
+            self.__nextUpdate = currentTime + sleepTime
             
             self.updated.emit()
-            self.sleep(difference)
+            self.sleep(sleepTime)
         
 
     def getTimeToNextUpdateAsPercent(self):
@@ -83,12 +99,20 @@ class VVSConnectionUpdater(QThread, QObject):
 
 
     def getNextConnection(self):
-        if self.__cachedConnection == None:
-            raise NoVVSConnectionFoundError()
-        elif self.__errorCount == self.__errorDelay:
-            if self.__continuousInternetConErrors == self.__errorDelay:
+        if self.__errorCount == self.__errorDelay:
+            if self.__continuousInternetConErrors == self.__errorCount:
                 raise InternetConnectionError()
-            raise NoVVSConnectionFoundError()
+            else:
+                raise NoVVSConnectionFoundError()
+        #Just in case the value is retrieved right after the start of the program
+        if self.__cachedConnection == None:
+            if self.__errorCount > 0:
+                if self.__continuousInternetConErrors == self.__errorCount:
+                    raise InternetConnectionError()
+                else:
+                    raise NoVVSConnectionFoundError()
+            else:
+                raise NoVVSConnectionFoundError()
         return self.__cachedConnection
 
 
@@ -112,9 +136,9 @@ if __name__ == '__main__':
     print("This file is not supposed to be run as main.")
 
     x60 = vvsDepartureAPI.connectionsData["X60UniToLeo"]
-    test = VVSConnectionUpdater(x60[0],x60[1],x60[2], updateDelay = 10)
+    test = VVSConnectionUpdater(x60[0],x60[1],x60[2], synchronized = True, updateDelay = 15)
     test.start()
-    time.sleep(1)
+    time.sleep(2)
     test.stop()
     print(test.getTimeToNextUpdateAsPercent())
     test.wait()

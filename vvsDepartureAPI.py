@@ -150,7 +150,7 @@ def main():
         except (InternetConnectionError, NoVVSConnectionFoundError) as e:
             print("Error: Could not retrieve 92 data")
 
-        time.sleep(30)
+        time.sleep(15)
         print("\n-------------------------------------\n")
 
 
