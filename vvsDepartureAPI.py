@@ -105,30 +105,10 @@ class VVSConnection:
         if len(filteredConnections) == 0:
             raise NoVVSConnectionFoundError('The VVS API did not return any connections that matched the search criteria.')
         
-        #Find next vehicle from the list. This is just a sanity check, the list is most likely already sorted.
-        nextConnectionIndex = VVSConnection.__findNextConnectionFromList(filteredConnections)
-        #print(nextConnectionIndex)
-        #print(filteredConnections[nextConnectionIndex])
-        return filteredConnections[nextConnectionIndex]
+        filteredConnections.sort(key=lambda x: x.getMinutesToDeparture())
         
-
-
-    #Currently assumes that all buses in busList depart in the future
-    @staticmethod
-    def __findNextConnectionFromList(connectionsList):
-        if len(connectionsList) == 1:
-            return 0
-
-        nextConnectionIndex = 0
-        for i in range(1, len(connectionsList)):
-            nextConnection = connectionsList[nextConnectionIndex]
-            otherConnection = connectionsList[i]
-            difference = (otherConnection.departure - nextConnection.departure).total_seconds()
-            if difference < 0:
-                nextConnectionIndex = i
-        return nextConnectionIndex
-    
-
+        return filteredConnections[0]
+        
 
 
 

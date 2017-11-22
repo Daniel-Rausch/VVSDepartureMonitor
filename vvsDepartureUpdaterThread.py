@@ -2,15 +2,38 @@
 import time
 
 from PyQt5.QtCore import *
-
+from PyQt5.QtQml import qmlRegisterType
 import vvsDepartureAPI
 from vvsDepartureAPI import *
 
 
+class QVVSConnection(QObject):
+
+    _ = pyqtSignal()
+        
+    def __init__(self, vvsc):
+        super(QObject, self).__init__()
+        self.vvsc = vvsc
+
+    @pyqtProperty(str, notify=_)
+    def line(self):
+        return self.vvsc.line
+
+    @pyqtProperty(str, notify=_)
+    def station(self):
+        return self.vvsc.station
+
+    @pyqtProperty(str, notify=_)
+    def direction(self):
+        return self.vvsc.direction
+    
+
+qmlRegisterType(QVVSConnection, 'QVVSConnection', 1, 0, 'QVVSConnection')    
+
 
 
 #Updates the next connection in the background and prepares strings for the gui to display
-class VVSConnectionUpdater(QThread, QObject):
+class VVSConnectionUpdater(QThread):
 
     updated = pyqtSignal()
 
@@ -34,12 +57,7 @@ class VVSConnectionUpdater(QThread, QObject):
         self.__errorCount = 0
         self.__continuousInternetConErrors = 0
 
-        currentTime = int(time.time())
-        if synchronized:
-            difference =  currentTime % self.__updateDelay
-            self.__nextUpdate = currentTime - difference + self.__updateDelay
-        else:
-            self.__nextUpdate = currentTime + self.__updateDelay
+        self.__nextUpdate = int(time.time())
 
 
     def stop(self):
@@ -50,17 +68,15 @@ class VVSConnectionUpdater(QThread, QObject):
         while not self.__halt:
             try:
                 nextConnection = VVSConnection.getNextConnectionFromStation(self.__station, self.__line, self.__direction)
-            except InternetConnectionError as e:
+            except (InternetConnectionError, NoVVSConnectionFoundError) as e:
                 #print(e)
                 if self.__errorCount < self.__errorDelay:
                     self.__errorCount += 1
-                if self.__continuousInternetConErrors < self.__errorDelay:
-                    self.__continuousInternetConErrors += 1
-            except NoVVSConnectionFoundError as e:
-                #print(e)
-                if self.__errorCount < self.__errorDelay:
-                    self.__errorCount += 1
-                self.__continuousInternetConErrors = 0
+                if type(e) == InternetConnectionError:
+                    if self.__continuousInternetConErrors < self.__errorDelay:
+                        self.__continuousInternetConErrors += 1
+                else:
+                    self.__continuousInternetConErrors = 0
             else:
                 print(nextConnection)
                 if(nextConnection == None):
@@ -127,10 +143,19 @@ class VVSConnectionUpdater(QThread, QObject):
     def getNextConnectionMinutesToDeparture(self):
         return self.getNextConnection().getMinutesToDeparture()
 
+    def getNextConnection2(self):
+        print ("Cached:" + repr(self.__cachedConnection))
+        self.a = QVVSConnection(self.__cachedConnection)
+        return self.a
+
+    nextConnection = pyqtProperty(QVVSConnection, getNextConnection2, notify=updated)
+    #nextConnection = pyqtProperty(QVVSConnection, lambda x: QVVSConnection(x.__cachedConnection), notify=updated)
+    test = pyqtProperty(int, lambda: 42, notify=updated)
 
 
 
 
+    
 
 if __name__ == '__main__':
     print("This file is not supposed to be run as main.")
