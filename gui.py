@@ -12,16 +12,25 @@ from vvsDepartureAPI import connectionsData
 
 class VVSApp(QObject):
     QMLFILE = 'gui.qml'
+
+    CONNECTIONS = (connectionsData['X60UniToLeo'], connectionsData['92UniToLeo'])
     
     def __init__(self):
         super(QObject, self).__init__()
         self.app = QGuiApplication(sys.argv)
         self.view = QQuickView()
         self.view.setResizeMode(QQuickView.SizeRootObjectToView)
-        #self.view.engine().quit.connect(self.app.quit)
 
-        self.con = VVSConnectionUpdater('5006021', 'X60', 'Leonberg Bf')
-        self.con.start()
+        self.con = []
+        for connection in self.CONNECTIONS:
+            updaterThread = VVSConnectionUpdater(connection[0], connection[1], connection[2])
+            updaterThread.start()
+            self.con.append(updaterThread)
+            #print(connection)
+        #self.con = VVSConnectionUpdater('5006021', 'X60', 'Leonberg Bf')
+        #self.con.start()
+
+        #print(self.con)
 
         self.view.rootContext().setContextProperty('con', self.con)
         self.view.setSource(QUrl(self.QMLFILE))
