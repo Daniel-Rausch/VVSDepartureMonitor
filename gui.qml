@@ -38,7 +38,7 @@ Rectangle {
                     }else if(minRemaining >=6){
                         return "forestgreen"
                     }else if(minRemaining >= 4){
-                        return "gold"
+                        return "goldenrod"
                     }
 		            return "darkred";
 		        }
@@ -50,7 +50,7 @@ Rectangle {
                     anchors.topMargin: 10
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    width: parent.width * 0.30
+                    width: parent.width * 0.33
                     
 		            color: "white"
                     font.bold: true
@@ -72,7 +72,7 @@ Rectangle {
                             return "<i>Internet<br>Error!</i>"
                         }
                         else if(modelData.nextConnection.errorNotFound){
-                            return "<i>No Con<br>found!</i>"
+                            return "<i>Not found!</i>"
                         }
                         
 		                return modelData.nextConnection.minutesToDeparture + " min left";
@@ -116,9 +116,39 @@ Rectangle {
                             return ""
                         }
                         
-		                return "Delay of " + modelData.nextConnection.delay;
+		                return "Delay of " + modelData.nextConnection.delay + " min";
 		            }
 	            }
+
+                Canvas {
+                    id: progress_indicator
+                    anchors.right: parent.right
+                    anchors.bottom: separator_line.top
+
+                    width: 100
+                    height: 100
+                    
+                    onPaint: {
+                        var ctx = getContext("2d");
+                        ctx.reset();
+
+                        var centreX = width / 2;
+                        var centreY = height / 2;
+
+                        var arcPercentage = modelData.updateProgress * -1 + 1
+
+                        ctx.beginPath();
+                        ctx.fillStyle = "white";
+                        ctx.moveTo(centreX, centreY);
+                        ctx.arc(centreX, centreY, width / 4, Math.PI*(-0.5), Math.PI*(-0.5) - arcPercentage * Math.PI * 2, true);
+                        ctx.fill();
+                    }
+                    
+                    Timer {
+                        interval: 100; running: true; repeat: true
+                        onTriggered: progress_indicator.requestPaint()
+                    }
+                }
                 
                 Rectangle{
                     id: separator_line

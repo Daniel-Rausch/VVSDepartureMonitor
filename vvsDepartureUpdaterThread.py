@@ -3,7 +3,7 @@ import time
 
 from PyQt5.QtCore import *
 from PyQt5.QtQml import qmlRegisterType
-from vvsDepartureAPI import (connectionsData, VVSConnection)
+from vvsDepartureAPI import (connectionsData, VVSConnection, InternetConnectionError, NoVVSConnectionFoundError)
 
 
 class QVVSConnectionData(QObject):
@@ -17,7 +17,7 @@ class QVVSConnectionData(QObject):
         self.__direction = direction
         
         self.vvsc = vvsc
-        self.internetConError = True
+        self.internetConError = False
         self.noConFoundError = False
 
     def __str__(self):
@@ -117,6 +117,12 @@ class VVSConnectionUpdater(QThread):
                 else:
                     self.__continuousInternetConErrors = 0
 
+                #Handle special case where the first connection try already yields an error:
+                if self.__connectionData.vvsc == None:
+                    self.__errorCount = self.__errorDelay
+                    if type(e) == InternetConnectionError:
+                        self.__continuousInternetConErrors = self.__errorDelay
+
                 if self.__errorCount == self.__errorDelay:
                     if self.__continuousInternetConErrors == self.__errorDelay:
                         self.__connectionData.internetConError = True
@@ -151,11 +157,11 @@ class VVSConnectionUpdater(QThread):
             
             self.updated.emit()
             self.sleep(sleepTime)
-        
+
 
     def getTimeToNextUpdateAsPercent(self):
         currentTime = time.time()
-        percentage = (self.__nextUpdate - currentTime)/self.__updateDelay
+        percentage =(self.__nextUpdate - currentTime)/self.__updateDelay
         if percentage > 1:
             return 1.0
         elif percentage < 0:
@@ -163,13 +169,12 @@ class VVSConnectionUpdater(QThread):
         else:
             return percentage
 
-
     def getNextConnection(self):
         return self.__connectionData
 
 
+    updateProgress = pyqtProperty(float, getTimeToNextUpdateAsPercent, notify=updated)
     nextConnection = pyqtProperty(QVVSConnectionData, getNextConnection, notify=updated)
-
 
 
 
