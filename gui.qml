@@ -1,5 +1,5 @@
 import QtQuick 2.2
-//import QVVSConnection 1.0
+//import QVVSConnectionData 1.0
 
 Rectangle {
     color: "black"
@@ -16,7 +16,7 @@ Rectangle {
 	Text {
 	    id: text_remaining
 	    color: "white"
-	    text: "Next bus in: " + con.nextConnection.line
+	    text: "Next bus in: " + con.nextConnection.line + " - " + con.nextConnection.minutesToDeparture
 	    anchors.fill: parent
 	}
     }

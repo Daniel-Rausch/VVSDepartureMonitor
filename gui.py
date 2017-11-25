@@ -8,6 +8,7 @@ from PyQt5.QtQuick import QQuickView
 import sys
 from datetime import datetime
 from vvsDepartureUpdaterThread import VVSConnectionUpdater
+from vvsDepartureAPI import connectionsData
 
 class VVSApp(QObject):
     QMLFILE = 'gui.qml'

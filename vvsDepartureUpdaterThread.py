@@ -3,32 +3,70 @@ import time
 
 from PyQt5.QtCore import *
 from PyQt5.QtQml import qmlRegisterType
-import vvsDepartureAPI
-from vvsDepartureAPI import *
+from vvsDepartureAPI import (connectionsData, VVSConnection)
 
 
-class QVVSConnection(QObject):
+class QVVSConnectionData(QObject):
 
     _ = pyqtSignal()
         
-    def __init__(self, vvsc):
+    def __init__(self, vvsc = None):
         super(QObject, self).__init__()
         self.vvsc = vvsc
+        self.internetConError = False
+        self.noConFoundError = False
+
+    def __str__(self):
+        if self.vvsc == None:
+            return ""
+        return self.vvsc.__str__()
+
+    @pyqtProperty(bool, notify=_)
+    def errorInternet(self):
+        return self.internetConError
+
+    @pyqtProperty(bool, notify=_)
+    def errorNotFound(self):
+        return self.noConFoundError
 
     @pyqtProperty(str, notify=_)
     def line(self):
+        if self.vvsc == None:
+            return ""
         return self.vvsc.line
 
     @pyqtProperty(str, notify=_)
     def station(self):
+        if self.vvsc == None:
+            return ""
         return self.vvsc.station
 
     @pyqtProperty(str, notify=_)
     def direction(self):
+        if self.vvsc == None:
+            return ""
         return self.vvsc.direction
+
+    @pyqtProperty(str, notify=_)
+    def departureDate(self):
+        if self.vvsc == None:
+            return ""
+        return self.vvsc.getDepartureDateAsString()
+
+    @pyqtProperty(str, notify=_)
+    def departureTime(self):
+        if self.vvsc == None:
+            return ""
+        return self.vvsc.getDepartureTimeAsString()
+
+    @pyqtProperty(int, notify=_)
+    def minutesToDeparture(self):
+        if self.vvsc == None:
+            return 0
+        return self.vvsc.getMinutesToDeparture()
     
 
-qmlRegisterType(QVVSConnection, 'QVVSConnection', 1, 0, 'QVVSConnection')    
+qmlRegisterType(QVVSConnectionData, 'QVVSConnectionData', 1, 0, 'QVVSConnectionData')    
 
 
 
@@ -37,7 +75,7 @@ class VVSConnectionUpdater(QThread):
 
     updated = pyqtSignal()
 
-    #syncrhonized: if set to true, then all threads with the same update delay will update at the same time
+    #synchronized: if set to true, then all threads with the same update delay will update at the same time
     #updateDelay: number of seconds until next data retrieval
     #minUpdateDelay: Only used if synchronized. Sync might result in an update that is scheduled immediately after the previous one, even for large updateDelay values. This forces a minimum wait time.
     #errorDelay: Number of subsequently failed updates until an error is forwarded. Until that number is reached, the last connection that was successfully retrieved is forwarded instead.
@@ -53,7 +91,7 @@ class VVSConnectionUpdater(QThread):
 
         self.__halt = False
 
-        self.__cachedConnection = None
+        self.__connectionData = QVVSConnectionData()
         self.__errorCount = 0
         self.__continuousInternetConErrors = 0
 
@@ -78,11 +116,11 @@ class VVSConnectionUpdater(QThread):
                 else:
                     self.__continuousInternetConErrors = 0
             else:
-                print(nextConnection)
+                #print(nextConnection)
                 if(nextConnection == None):
                     print('Error: This code should never be executed. Please fix the API!')
                     continue
-                self.__cachedConnection = nextConnection
+                self.__connectionData.vvsc = nextConnection
                 self.__errorCount = 0
                 self.__continuousInternetConErrors = 0
 
@@ -115,42 +153,10 @@ class VVSConnectionUpdater(QThread):
 
 
     def getNextConnection(self):
-        if self.__errorCount == self.__errorDelay:
-            if self.__continuousInternetConErrors == self.__errorCount:
-                raise InternetConnectionError()
-            else:
-                raise NoVVSConnectionFoundError()
-        #Just in case the value is retrieved right after the start of the program
-        if self.__cachedConnection == None:
-            if self.__errorCount > 0:
-                if self.__continuousInternetConErrors == self.__errorCount:
-                    raise InternetConnectionError()
-                else:
-                    raise NoVVSConnectionFoundError()
-            else:
-                raise NoVVSConnectionFoundError()
-        return self.__cachedConnection
+        return self.__connectionData
 
 
-    def getNextConnectionDepartureDate(self):
-        return self.getNextConnection().getDepartureDateAsString()
-
-
-    def getNextConnectionDepartureTime(self):
-        return self.getNextConnection().getDepartureTimeAsString()
-
-
-    def getNextConnectionMinutesToDeparture(self):
-        return self.getNextConnection().getMinutesToDeparture()
-
-    def getNextConnection2(self):
-        print ("Cached:" + repr(self.__cachedConnection))
-        self.a = QVVSConnection(self.__cachedConnection)
-        return self.a
-
-    nextConnection = pyqtProperty(QVVSConnection, getNextConnection2, notify=updated)
-    #nextConnection = pyqtProperty(QVVSConnection, lambda x: QVVSConnection(x.__cachedConnection), notify=updated)
-    test = pyqtProperty(int, lambda: 42, notify=updated)
+    nextConnection = pyqtProperty(QVVSConnectionData, getNextConnection, notify=updated)
 
 
 
@@ -160,14 +166,15 @@ class VVSConnectionUpdater(QThread):
 if __name__ == '__main__':
     print("This file is not supposed to be run as main.")
 
-    x60 = vvsDepartureAPI.connectionsData["X60UniToLeo"]
+    x60 = connectionsData["X60UniToLeo"]
     test = VVSConnectionUpdater(x60[0],x60[1],x60[2], synchronized = True, updateDelay = 15)
     test.start()
     time.sleep(2)
     test.stop()
     print(test.getTimeToNextUpdateAsPercent())
     test.wait()
-    print(test.getNextConnection())
-    print(test.getNextConnectionDepartureDate())
-    print(test.getNextConnectionDepartureTime())
-    print(test.getNextConnectionMinutesToDeparture())
+    con = test.getNextConnection()
+    print(con)
+    print(con.departureDate)
+    print(con.departureTime)
+    print(con.minutesToDeparture)
