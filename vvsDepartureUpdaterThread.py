@@ -10,10 +10,14 @@ class QVVSConnectionData(QObject):
 
     _ = pyqtSignal()
         
-    def __init__(self, vvsc = None):
+    def __init__(self, station, line, direction, vvsc = None):
         super(QObject, self).__init__()
+        self.__station = station
+        self.__line = line
+        self.__direction = direction
+        
         self.vvsc = vvsc
-        self.internetConError = False
+        self.internetConError = True
         self.noConFoundError = False
 
     def __str__(self):
@@ -31,21 +35,21 @@ class QVVSConnectionData(QObject):
 
     @pyqtProperty(str, notify=_)
     def line(self):
-        if self.vvsc == None:
-            return ""
-        return self.vvsc.line
+        return self.__line
 
     @pyqtProperty(str, notify=_)
     def station(self):
-        if self.vvsc == None:
-            return ""
-        return self.vvsc.station
+        return self.__station
 
     @pyqtProperty(str, notify=_)
     def direction(self):
+        return self.__direction
+
+    @pyqtProperty(int, notify=_)
+    def delay(self):
         if self.vvsc == None:
-            return ""
-        return self.vvsc.direction
+            return 0
+        return self.vvsc.delay
 
     @pyqtProperty(str, notify=_)
     def departureDate(self):
@@ -81,17 +85,14 @@ class VVSConnectionUpdater(QThread):
     #errorDelay: Number of subsequently failed updates until an error is forwarded. Until that number is reached, the last connection that was successfully retrieved is forwarded instead.
     def __init__(self, station, line, direction, synchronized=True, updateDelay=15, minUpdateDelay=1, errorDelay=4):
         super().__init__()
-        self.__station = station
-        self.__line = line
-        self.__direction = direction
+        self.__connectionData = QVVSConnectionData(station, line, direction)
+        
         self.__synchronized = synchronized
         self.__updateDelay = updateDelay
         self.__minUpdateDelay = minUpdateDelay
         self.__errorDelay = errorDelay
 
         self.__halt = False
-
-        self.__connectionData = QVVSConnectionData()
         self.__errorCount = 0
         self.__continuousInternetConErrors = 0
 
@@ -105,7 +106,7 @@ class VVSConnectionUpdater(QThread):
     def run(self):
         while not self.__halt:
             try:
-                nextConnection = VVSConnection.getNextConnectionFromStation(self.__station, self.__line, self.__direction)
+                nextConnection = VVSConnection.getNextConnectionFromStation(self.__connectionData.station, self.__connectionData.line, self.__connectionData.direction)
             except (InternetConnectionError, NoVVSConnectionFoundError) as e:
                 #print(e)
                 if self.__errorCount < self.__errorDelay:
@@ -115,12 +116,23 @@ class VVSConnectionUpdater(QThread):
                         self.__continuousInternetConErrors += 1
                 else:
                     self.__continuousInternetConErrors = 0
+
+                if self.__errorCount == self.__errorDelay:
+                    if self.__continuousInternetConErrors == self.__errorDelay:
+                        self.__connectionData.internetConError = True
+                        self.__connectionData.noConFoundError = False
+                    else:
+                        self.__connectionData.internetConError = False
+                        self.__connectionData.noConFoundError = True
+                        
             else:
                 #print(nextConnection)
                 if(nextConnection == None):
                     print('Error: This code should never be executed. Please fix the API!')
                     continue
                 self.__connectionData.vvsc = nextConnection
+                self.__connectionData.internetConError = False
+                self.__connectionData.noConFoundError = False
                 self.__errorCount = 0
                 self.__continuousInternetConErrors = 0
 
