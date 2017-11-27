@@ -35,7 +35,7 @@ Rectangle {
                     var minRemaining = modelData.nextConnection.minutesToDeparture
                     if(minRemaining > 15){
                         return "darkblue"
-                    }else if(minRemaining >=6){
+                    }else if(minRemaining >6){
                         return "forestgreen"
                     }else if(minRemaining >= 4){
                         return "goldenrod"
@@ -45,12 +45,12 @@ Rectangle {
                 
             	Text {
                     id: text_line_name
-		            font.pixelSize: 75
+		            font.pixelSize: 75 * (parent.height / 245)
                     anchors.top: parent.top
-                    anchors.topMargin: 10
+                    //anchors.topMargin: 10
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    width: parent.width * 0.33
+                    width: 180 * (parent.height / 245)
                     
 		            color: "white"
                     font.bold: true
@@ -82,9 +82,9 @@ Rectangle {
             	Text {
                     id: text_departure_time
 		            anchors.left: text_line_name.left
-                    anchors.leftMargin: parent.width * 0.1
+                    anchors.leftMargin: text_line_name.width * 0.3
                     anchors.top: text_line_name.bottom
-                    anchors.topMargin: 5
+                    //anchors.topMargin: 5
 		            font.pixelSize: text_line_name.font.pixelSize * 0.6
                     
 		            color: "white"
@@ -125,8 +125,8 @@ Rectangle {
                     anchors.right: parent.right
                     anchors.bottom: separator_line.top
 
-                    width: 100
-                    height: 100
+                    width: 100 * (parent.height / 245)
+                    height: 100 * (parent.height / 245)
                     
                     onPaint: {
                         var ctx = getContext("2d");
