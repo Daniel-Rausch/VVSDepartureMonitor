@@ -29,7 +29,7 @@ Rectangle {
 		        function computeBGColor() {
                     //Check for errors
                     if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
-                        return "#9400D3"
+                        return "purple"
                     }
                     
                     var minRemaining = modelData.nextConnection.minutesToDeparture
