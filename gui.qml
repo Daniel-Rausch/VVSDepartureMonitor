@@ -104,8 +104,8 @@ Rectangle {
                     id: text_delay
 		            anchors.left: text_departure_time.left
                     anchors.top: text_departure_time.bottom
-                    anchors.topMargin: 5
-		            font.pixelSize: text_line_name.font.pixelSize * 0.6
+                    //anchors.topMargin: 5
+		            font.pixelSize: text_departure_time.font.pixelSize
                     
 		            color: "white"
                     text: computeText();
@@ -155,55 +155,10 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: 10
+                    height: Math.max(1,Math.min(10, 10 * (outer_frame.height/2/240)));
                     color: "white"
                 }
             }
 	    }
     }
-
-
-/*
-    Rectangle {
-	color: "darkblue"
-	anchors.top: parent.top
-	anchors.left: parent.left
-	anchors.right: parent.right
-	anchors.bottom: parent.bottom
-	
-	Text {
-	    id: text_remaining
-	    color: "white"
-	    text: "Next bus in: " + con.nextConnection.line + " - " + con.nextConnection.minutesToDeparture
-	    anchors.fill: parent
-	}
-    }
-	
-
-    Column {
-	anchors.top: text_remaining.bottom
-	anchors.left: parent.left
-	anchors.right: parent.right
-	anchors.bottom: parent.bottom
-
-	Repeater {
-	    model: countdowns.items
-	    
-	    Text {
-		color: "yellow"
-		//anchors.top: text_remaining.bottom
-		text: generateText();
-		//fontSizeMode: Text.Fit
-		font.pixelSize: 100
-		//width: parent.width
-		//height: parent.height/2
-		height: 120
-
-		function generateText() {
-		    return index + ". " + modelData.name + ": " + modelData.remaining + "s";
-		}
-		
-	    }
-	}
-    }*/
 }
