@@ -34,11 +34,10 @@ class VVSApp(QObject):
 
         self.view.rootContext().setContextProperty('con', self.con)
         self.view.setSource(QUrl(self.QMLFILE))
-
         
 
     def run(self):
-        self.view.show()
+        self.view.showFullScreen()
         sys.exit(self.app.exec_())
 
 
