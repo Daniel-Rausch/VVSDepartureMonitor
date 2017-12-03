@@ -45,12 +45,12 @@ Rectangle {
                 
             	Text {
                     id: text_line_name
-		            font.pixelSize: 75 * (parent.height / 245)
                     anchors.top: parent.top
-                    //anchors.topMargin: 10
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    width: 180 * (parent.height / 245)
+                    width: 190 * (parent.height / 245)
+                    font.family: "Times"
+		            font.pixelSize: 75 * (parent.height / 245)
                     
 		            color: "white"
                     font.bold: true
@@ -62,6 +62,7 @@ Rectangle {
 		            anchors.left: text_line_name.right
                     anchors.top: text_line_name.top
 		            font.pixelSize: text_line_name.font.pixelSize
+                    font.family: text_line_name.font.family
                     
 		            color: "white"
 		            text: computeText();
@@ -84,8 +85,8 @@ Rectangle {
 		            anchors.left: text_line_name.left
                     anchors.leftMargin: text_line_name.width * 0.3
                     anchors.top: text_line_name.bottom
-                    //anchors.topMargin: 5
 		            font.pixelSize: text_line_name.font.pixelSize * 0.6
+                    font.family: text_line_name.font.family
                     
 		            color: "white"
                     text: computeText();
@@ -104,8 +105,8 @@ Rectangle {
                     id: text_delay
 		            anchors.left: text_departure_time.left
                     anchors.top: text_departure_time.bottom
-                    //anchors.topMargin: 5
 		            font.pixelSize: text_departure_time.font.pixelSize
+                    font.family: text_line_name.font.family
                     
 		            color: "white"
                     text: computeText();
