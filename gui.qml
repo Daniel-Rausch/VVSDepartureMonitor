@@ -48,8 +48,8 @@ Rectangle {
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.leftMargin: 10
-                    width: 190 * (parent.height / 245)
-                    font.family: "Times"
+                    width: 180 * (parent.height / 245)
+                    font.family: "Noto Sans"
 		            font.pixelSize: 75 * (parent.height / 245)
                     
 		            color: "white"
