@@ -70,10 +70,10 @@ Rectangle {
                     function computeText() {
                         //Check for errors. Note that the updater ensures that only one at a time can occur.
                         if (modelData.nextConnection.errorInternet){
-                            return "<i>Internet<br>Error!</i>"
+                            return "<i>Internet<br>Error!</i>";
                         }
                         else if(modelData.nextConnection.errorNotFound){
-                            return "<i>Not found!</i>"
+                            return "<i>Not found!</i>";
                         }
                         
                         return modelData.nextConnection.minutesToDeparture + " min left";
@@ -94,7 +94,7 @@ Rectangle {
                     function computeText() {
                         //Check for errors. Note that the updater ensures that only one at a time can occur.
                         if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
-                            return ""
+                            return "";
                         }
                         
                         return "Departs at " + modelData.nextConnection.departureTime;

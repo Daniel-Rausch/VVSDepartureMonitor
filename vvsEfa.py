@@ -1,7 +1,10 @@
+#This code was originally taken from the metaEFA project. See https://github.com/opendata-stuttgart/metaEFA.
+#It has been modified to fit the specific needs of this project.
+
 import logging
 import requests
 from datetime import datetime
-import yaml
+#import yaml
 
 def get_EFA_from_VVS(station_id):
     """
@@ -52,8 +55,9 @@ def get_EFA_from_VVS(station_id):
     url += '&useRealtime={:d}'.format(useRealtime)
     url += '&outputFormat={}'.format(outputFormat)
     url += '&coordOutputFormat={}'.format(coordOutputFormat)
-
-    r = requests.get(url)
+    
+    r = requests.get(url, timeout=2)
+    r.raise_for_status()
     r.encoding = 'UTF-8'
     efa = r.json()
     return efa
@@ -84,18 +88,23 @@ def parse_efa(efa):
             delay = 0
 
         departureObject = {
-            "stopName": stopName,
-            "number": number,
-            "direction": direction,
+            "stopName": str(stopName),
+            "number": str(number),
+            "direction": str(direction),
             "departureTime": datetime(**{str(k):int(v) for k, v in realDateTime.items() if k != 'weekday'}),
             "delay": int(delay),
-            "stationCoordinates": latlon
+            #"stationCoordinates": latlon
         }
 
         parsedDepartures.append(departureObject)
 
     return parsedDepartures
 
-x = get_EFA_from_VVS(5006021)
-print (yaml.dump(x))
-print (parse_efa(x))
+
+
+
+if __name__ == "__main__":
+    print("this file is not intended to be run as main.")
+    x = get_EFA_from_VVS(5006021)
+    #print (yaml.dump(x))
+    print (parse_efa(x))

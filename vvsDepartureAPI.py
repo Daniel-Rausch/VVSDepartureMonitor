@@ -1,8 +1,8 @@
 #coding: utf-8
-import urllib.request
-import json
+import requests
 import datetime
 import time
+from vvsEfa import get_EFA_from_VVS, parse_efa
 
 
 
@@ -23,15 +23,11 @@ class InternetConnectionError(Exception):
 class VVSConnection:
     
     def __init__(self, dictFromVVSApi):
-        self.line = str(dictFromVVSApi['number'])
-        self.station = str(dictFromVVSApi['stopName'])
-        self.direction = str(dictFromVVSApi['direction'])
-        self.departure = datetime.datetime(int(dictFromVVSApi['departureTime']['year']),
-                                           int(dictFromVVSApi['departureTime']['month']),
-                                           int(dictFromVVSApi['departureTime']['day']),
-                                           int(dictFromVVSApi['departureTime']['hour']),
-                                           int(dictFromVVSApi['departureTime']['minute']))
-        self.delay = int(dictFromVVSApi['delay'])
+        self.line = dictFromVVSApi['number']
+        self.station = dictFromVVSApi['stopName']
+        self.direction = dictFromVVSApi['direction']
+        self.departure = dictFromVVSApi['departureTime']
+        self.delay = dictFromVVSApi['delay']
 
 
 
@@ -69,36 +65,27 @@ class VVSConnection:
     @staticmethod
     def getNextConnectionFromStation(station, line, direction):
         #Get data about station from online API
-        data = ""
-        dataFormatted = {}
+        data = []
         try:
-            hdr = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.64 Safari/537.11',
-               'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-               'Accept-Encoding': 'none',
-               'Accept-Language': 'en-US,en;q=0.8',
-               'Connection': 'keep-alive'}
-            request = urllib.request.Request("https://efa-api.asw.io/api/v1/station/" + station + "/departures/?format=json", headers = hdr)
-            f = urllib.request.urlopen(request, None, 5)
-            data = f.read().decode('UTF-8')
-            dataFormatted = json.loads(data)
-        except Exception as e:
+            data = parse_efa(get_EFA_from_VVS(station))
+        except requests.exceptions.HTTPError as e:
             raise InternetConnectionError('Could not retrieve data from the VVS API.')
-        #print(dataFormatted)
+        #print(data)
         
-        #Filter interesting buses from the list
+        #Filter interesting connections from the list
         filteredConnections = []
-        for connectionDict in dataFormatted:
+        for connectionDict in data:
             #print(connectionDict)
             
-            #Check whether bus matches the requested line and direction
+            #Check whether connection matches the requested line and direction
             if str(connectionDict['number']) == line and str(connectionDict['direction']) == direction:
                 
-                #Make a sanity check to filter out past buses
+                #Make a sanity check to filter out past connections
                 newVVSConnectionObject = VVSConnection(connectionDict)
                 if newVVSConnectionObject.getMinutesToDeparture() < -1:
                     continue
                 
-                #Add bus to list of potential buses
+                #Add connection to list of potential connections
                 filteredConnections.append(newVVSConnectionObject)
         #print(filteredConnections)
         

@@ -10,5 +10,9 @@ This project allows you to retrieve departure times of buses and trains in the V
 ### How do I get set up? ###
 
 * Install Python v3.
-* If you want to use the frontend, also install PyQT5 and QT. The easiest way to do so is via pip, a tool that comes with pyton. Just use the following command to install both PyQT5 and a binary of QT:
+* Install the python requests library. The easiest way is to use pip3, i.e., type the following in your terminal (potentially after installing pip3 first):
+> pip3 install requests
+* If you want to use the frontend, also install PyQT5 and QT. The easiest way to do so is also via pip3:
 > pip3 install pyqt5
+Note that this won't work for the raspberry pi. Instead, you need to manually install the required packages:
+> TODO: package list
