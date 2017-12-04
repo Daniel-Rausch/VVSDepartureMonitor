@@ -4,7 +4,7 @@
 import logging
 import requests
 from datetime import datetime
-#import yaml
+import yaml
 
 def get_EFA_from_VVS(station_id):
     """
@@ -68,6 +68,12 @@ def parse_efa(efa):
 
     if not efa or "departureList" not in efa or not efa["departureList"]:
         return parsedDepartures
+
+
+    #special case: sometimes the API returns a json that contains a dict (with just 1 entry under the key "departure"?) instead of an array as departureList
+    if(type(efa["departureList"]) is dict):
+        efa["departureList"] = efa["departureList"].values()
+    
 
     for departure in efa["departureList"]:
         stopName = departure["stopName"]
