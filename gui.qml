@@ -12,21 +12,21 @@ Rectangle {
 
 
     Column {
-	    anchors.top: parent.top
-	    anchors.left: parent.left
-	    anchors.right: parent.right
-	    anchors.bottom: parent.bottom
+        anchors.top: parent.top
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
 
-	    Repeater {
-	        model: con
+        Repeater {
+            model: con
 
             Rectangle{
-	            anchors.left: parent.left
-	            anchors.right: parent.right
+                anchors.left: parent.left
+                anchors.right: parent.right
                 height: outer_frame.height/2 + separator_line.height/2
                 color: computeBGColor()
 
-		        function computeBGColor() {
+                function computeBGColor() {
                     //Check for errors
                     if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
                         return "purple"
@@ -40,34 +40,34 @@ Rectangle {
                     }else if(minRemaining >= 4){
                         return "goldenrod"
                     }
-		            return "darkred";
-		        }
+                    return "darkred";
+                }
                 
-            	Text {
+                Text {
                     id: text_line_name
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     width: 180 * (parent.height / 245)
                     font.family: "Noto Sans"
-		            font.pixelSize: 75 * (parent.height / 245)
+                    font.pixelSize: 75 * (parent.height / 245)
                     
-		            color: "white"
+                    color: "white"
                     font.bold: true
-		            text: modelData.nextConnection.line + ":"
-	            }
+                    text: modelData.nextConnection.line + ":"
+                }
                 
-            	Text {
+                Text {
                     id: text_time_remaining
-		            anchors.left: text_line_name.right
+                    anchors.left: text_line_name.right
                     anchors.top: text_line_name.top
-		            font.pixelSize: text_line_name.font.pixelSize
+                    font.pixelSize: text_line_name.font.pixelSize
                     font.family: text_line_name.font.family
                     
-		            color: "white"
-		            text: computeText();
+                    color: "white"
+                    text: computeText();
 
-		            function computeText() {
+                    function computeText() {
                         //Check for errors. Note that the updater ensures that only one at a time can occur.
                         if (modelData.nextConnection.errorInternet){
                             return "<i>Internet<br>Error!</i>"
@@ -76,50 +76,50 @@ Rectangle {
                             return "<i>Not found!</i>"
                         }
                         
-		                return modelData.nextConnection.minutesToDeparture + " min left";
-		            }
-	            }
+                        return modelData.nextConnection.minutesToDeparture + " min left";
+                    }
+                }
                 
-            	Text {
+                Text {
                     id: text_departure_time
-		            anchors.left: text_line_name.left
+                    anchors.left: text_line_name.left
                     anchors.leftMargin: text_line_name.width * 0.3
                     anchors.top: text_line_name.bottom
-		            font.pixelSize: text_line_name.font.pixelSize * 0.6
+                    font.pixelSize: text_line_name.font.pixelSize * 0.6
                     font.family: text_line_name.font.family
                     
-		            color: "white"
+                    color: "white"
                     text: computeText();
 
-		            function computeText() {
+                    function computeText() {
                         //Check for errors. Note that the updater ensures that only one at a time can occur.
                         if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
                             return ""
                         }
                         
-		                return "Departs at " + modelData.nextConnection.departureTime;
-		            }
-	            }
+                        return "Departs at " + modelData.nextConnection.departureTime;
+                    }
+                }
                 
-            	Text {
+                Text {
                     id: text_delay
-		            anchors.left: text_departure_time.left
+                    anchors.left: text_departure_time.left
                     anchors.top: text_departure_time.bottom
-		            font.pixelSize: text_departure_time.font.pixelSize
+                    font.pixelSize: text_departure_time.font.pixelSize
                     font.family: text_line_name.font.family
                     
-		            color: "white"
+                    color: "white"
                     text: computeText();
 
-		            function computeText() {
+                    function computeText() {
                         //Check for errors. Note that the updater ensures that only one at a time can occur.
                         if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
                             return ""
                         }
                         
-		                return "Delay of " + modelData.nextConnection.delay + " min";
-		            }
-	            }
+                        return "Delay of " + modelData.nextConnection.delay + " min";
+                    }
+                }
 
                 Canvas {
                     id: progress_indicator
@@ -160,6 +160,6 @@ Rectangle {
                     color: "white"
                 }
             }
-	    }
+        }
     }
 }
