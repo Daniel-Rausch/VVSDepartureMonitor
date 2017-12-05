@@ -11,8 +11,16 @@ Rectangle {
 
 
     FontLoader{
-        id: myFont
-        source: "fonts/NotoSans-Black.ttf"
+        id: myFont; source: "fonts/NotoSans-Regular.ttf"
+    }
+    FontLoader{
+        source: "fonts/NotoSans-Bold.ttf"
+    }
+    FontLoader{
+        source: "fonts/NotoSans-Italic.ttf"
+    }
+    FontLoader{
+        source: "fonts/NotoSans-BoldItalic.ttf"
     }
 
 
