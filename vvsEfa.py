@@ -56,7 +56,7 @@ def get_EFA_from_VVS(station_id):
     url += '&outputFormat={}'.format(outputFormat)
     url += '&coordOutputFormat={}'.format(coordOutputFormat)
     
-    r = requests.get(url, timeout=2)
+    r = requests.get(url, timeout=5)
     r.raise_for_status()
     r.encoding = 'UTF-8'
     efa = r.json()
