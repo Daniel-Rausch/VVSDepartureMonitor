@@ -10,6 +10,12 @@ Rectangle {
     height: 480
 
 
+    FontLoader{
+        id: myFont
+        source: "fonts/NotoSans-Black.ttf"
+    }
+
+
 
     Column {
         anchors.top: parent.top
@@ -49,7 +55,7 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.leftMargin: 10
                     width: 180 * (parent.height / 245)
-                    font.family: "Noto Sans"
+                    font.family: myFont.name //"Noto Sans"
                     font.pixelSize: 75 * (parent.height / 245)
                     
                     color: "white"
