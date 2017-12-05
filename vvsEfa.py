@@ -4,7 +4,7 @@
 import logging
 import requests
 from datetime import datetime
-import yaml
+#import yaml
 
 def get_EFA_from_VVS(station_id):
     """
