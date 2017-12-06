@@ -68,7 +68,7 @@ class VVSConnection:
         data = []
         try:
             data = parse_efa(get_EFA_from_VVS(station))
-        except (requests.exceptions.ConnectionError, requests.exceptions.HTTPError) as e:
+        except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout, requests.exceptions.HTTPError) as e:
             if debug:
                 print("Error in vvsDepartureApi: " + str(e))
             raise InternetConnectionError('Could not retrieve data from the VVS API.')
