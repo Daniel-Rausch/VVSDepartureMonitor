@@ -63,7 +63,7 @@ class VVSConnection:
 
     #Throws InternetConnectionError and NoVVSConnectionFoundError
     @staticmethod
-    def getNextConnectionFromStation(station, line, direction, debug=True):
+    def getNextConnectionFromStation(station, line, direction, debug=False):
         #Get data about station from online API
         data = []
         try:
