@@ -73,7 +73,7 @@ Rectangle {
                         anchors.leftMargin: 10
                         width: 0.8 * parent.height
                         font.family: myFont.name
-                        font.pixelSize: 0.33 * parent.height
+                        font.pixelSize: 0.32 * parent.height
                         
                         color: "white"
                         font.bold: true
@@ -133,7 +133,6 @@ Rectangle {
                         
                         color: "white"
                         text: computeText();
-
                         function computeText() {
                             //Check for errors. Note that the updater ensures that only one at a time can occur.
                             if (modelData.nextConnection.errorInternet || modelData.nextConnection.errorNotFound){
@@ -180,7 +179,7 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: Math.max(1,Math.min(10, 10 * (outer_frame.height/240/repeater.count)));
+                    height: Math.max(1, 8 * (outer_frame.height/240/repeater.count)) //Math.max(1,Math.min(10, 10 * (outer_frame.height/240/repeater.count)));
                     color: "white"
                 }
             }
