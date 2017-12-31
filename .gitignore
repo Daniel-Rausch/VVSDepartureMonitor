@@ -1,2 +1,4 @@
 *.qmlc
+
 *pycache*
+settings.yml
