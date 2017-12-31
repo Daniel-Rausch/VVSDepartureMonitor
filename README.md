@@ -15,7 +15,8 @@ This project allows you to retrieve departure times of buses and trains in the V
     * pyqt5 (not necessary when using only the backend as a library)
     * requests
     * notify2 (optional, for the notification feature on linux)
-The easiest way to install these libraries is via pip. Just enter, e.g., the following command into your terminal:
+
+* The easiest way to install these libraries is via pip. Just enter, e.g., the following command into your terminal:
 
     pip3 install pyqt5
 
