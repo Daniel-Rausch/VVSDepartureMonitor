@@ -4,7 +4,7 @@ from yaml import load, dump, YAMLError
 settings = {}
 
 __defaultSettings = {
-    'enableLogging': False,
+    'enableDebugOutputs': False,
     'enableNotifications': False,
     'notificationTimings': [
         "8:00", #Start 1st period
@@ -15,6 +15,7 @@ __defaultSettings = {
     }
 
 
+#Read the settings.yml file
 try:
     with open('settings.yml', 'r') as file:
         settings = load(file)
@@ -25,8 +26,15 @@ except FileNotFoundError as e:
     with open('settings.yml', 'w') as file:
         file.write(dump(__defaultSettings))
     settings = __defaultSettings
+else:
+    
+    #If some options were not present in the settings.yml file, use the default instead
+    for key in __defaultSettings:
+        if key not in settings:
+            settings[key] = __defaultSettings[key]
 
-print (settings)
-print (__defaultSettings)
+
+#print (settings)
+#print (__defaultSettings)
 
 

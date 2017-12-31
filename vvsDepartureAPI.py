@@ -3,6 +3,7 @@ import requests
 import datetime
 import time
 from vvsEfa import get_EFA_from_VVS, parse_efa
+from vvsSettings import settings
 
 
 
@@ -63,14 +64,14 @@ class VVSConnection:
 
     #Throws InternetConnectionError and NoVVSConnectionFoundError
     @staticmethod
-    def getNextConnectionFromStation(station, line, direction, debug=False):
+    def getNextConnectionFromStation(station, line, direction):
+        debug = settings['enableDebugOutputs']
         #Get data about station from online API
         data = []
         try:
             data = parse_efa(get_EFA_from_VVS(station))
         except (requests.exceptions.ConnectionError, requests.exceptions.ReadTimeout, requests.exceptions.HTTPError) as e:
-            if debug:
-                print("Error in vvsDepartureApi: " + str(e))
+            if debug: print("Error in vvsDepartureApi: " + str(e))
             raise InternetConnectionError('Could not retrieve data from the VVS API.')
         #print(data)
         
@@ -102,6 +103,8 @@ class VVSConnection:
 
 
 def main():
+    print("This file is not supposed to be run as main!")
+    
     while True:
         try:
             connectionData = connectionsData['X60UniToLeo']
