@@ -9,6 +9,14 @@ Rectangle {
     width: 640
     height: 480
 
+    property double scale: computeScale()
+
+    function computeScale(){
+        var xScale = width / 640;
+        var yScale = height / 480;
+        return xScale < yScale ? xScale : yScale;
+    }
+
 
     FontLoader{
         id: myFont; source: "fonts/NotoSans-Regular.ttf"
@@ -71,9 +79,9 @@ Rectangle {
                         anchors.top: parent.top
                         anchors.left: parent.left
                         anchors.leftMargin: 10
-                        width: 0.8 * parent.height
+                        width: 175 * outer_frame.scale
                         font.family: myFont.name
-                        font.pixelSize: 0.32 * parent.height
+                        font.pixelSize: 78 * outer_frame.scale
                         
                         color: "white"
                         font.bold: true
@@ -148,7 +156,7 @@ Rectangle {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
 
-                        width: Math.max(1, 0.4 * parent.height)
+                        width: Math.max(1, 100 * outer_frame.scale)
                         height: width
 
                         property int nextUpdateUnix: modelData.nextUpdate
@@ -195,7 +203,7 @@ Rectangle {
                     anchors.left: parent.left
                     anchors.right: parent.right
                     anchors.bottom: parent.bottom
-                    height: Math.max(1, 8 * (outer_frame.height/240/repeater.count)) //Math.max(1,Math.min(10, 10 * (outer_frame.height/240/repeater.count)));
+                    height: Math.max(1, 8 * (outer_frame.scale)) //Math.max(1,Math.min(10, 10 * (outer_frame.height/240/repeater.count)));
                     color: "white"
                 }
             }
