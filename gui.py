@@ -13,7 +13,9 @@ from vvsDepartureAPI import connectionsData
 class VVSApp(QObject):
     QMLFILE = 'gui.qml'
 
+    #CONNECTIONS = (connectionsData['X60UniToLeo'],)
     CONNECTIONS = (connectionsData['X60UniToLeo'], connectionsData['92UniToLeo'])
+    #CONNECTIONS = (connectionsData['X60UniToLeo'], connectionsData['92UniToLeo'], connectionsData['X60UniToLeo'])
     
     def __init__(self):
         super(QObject, self).__init__()

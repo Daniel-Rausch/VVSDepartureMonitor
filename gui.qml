@@ -13,7 +13,7 @@ Rectangle {
 
     function computeScale(){
         var xScale = width / 640;
-        var yScale = height / 480;
+        var yScale = height / (240 * con.length);
         return xScale < yScale ? xScale : yScale;
     }
 
@@ -47,14 +47,14 @@ Rectangle {
                 id: repeater_element
                 anchors.left: parent.left
                 anchors.right: parent.right
-                height: outer_frame.height/2 + separator_line.height/2
+                height: outer_frame.height/con.length
 
                 Rectangle{
                     id: background
                     anchors.top: parent.top
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.bottom: separator_line.top
+                    anchors.bottom: parent.bottom
                     color: computeBGColor()
 
                     function computeBGColor() {
@@ -202,9 +202,18 @@ Rectangle {
                     id: separator_line
                     anchors.left: parent.left
                     anchors.right: parent.right
-                    anchors.bottom: parent.bottom
+                    //anchors.bottom: parent.bottom
+                    y: parent.height - height/2
                     height: Math.max(1, 8 * (outer_frame.scale)) //Math.max(1,Math.min(10, 10 * (outer_frame.height/240/repeater.count)));
-                    color: "white"
+                    color: computeColor()
+
+                    function computeColor(){
+                        //Do not show the last separator
+                        if (repeater.count - 1 == index){
+                            return "transparent";
+                        }
+                        return "white";
+                    }
                 }
             }
         }
