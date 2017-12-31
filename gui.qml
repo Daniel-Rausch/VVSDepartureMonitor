@@ -150,6 +150,9 @@ Rectangle {
 
                         width: Math.max(1, 0.4 * parent.height)
                         height: width
+
+                        property int nextUpdateUnix: modelData.nextUpdate
+                        property int updateDelayInSec: modelData.updateDelay
                         
                         onPaint: {
                             var ctx = getContext("2d");
@@ -158,8 +161,21 @@ Rectangle {
                             var centreX = width / 2;
                             var centreY = height / 2;
 
-                            var arcPercentage = modelData.updateProgress * -1 + 1
+                            
+                            //var arcPercentage = modelData.updateProgress * -1 + 1;
 
+                            
+                            var currentTime = Date.now()/1000;  //convert from milliseconds to seconds
+                            var updateProgress = (nextUpdate - currentTime)/updateDelayInSec
+                            if(updateProgress < 0){
+                                updateProgress = 0;
+                            }else if (updateProgress > 1){
+                                updateProgress = 1;
+                            }
+                            var arcPercentage = updateProgress * -1 + 1;
+                            
+
+                            
                             ctx.beginPath();
                             ctx.fillStyle = "white";
                             ctx.moveTo(centreX, centreY);

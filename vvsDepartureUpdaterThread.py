@@ -78,6 +78,7 @@ qmlRegisterType(QVVSConnectionData, 'QVVSConnectionData', 1, 0, 'QVVSConnectionD
 class VVSConnectionUpdater(QThread):
 
     updated = pyqtSignal()
+    _ = pyqtSignal()
 
     #synchronized: if set to true, then all threads with the same update delay will update at the same time
     #updateDelay: number of seconds until next data retrieval
@@ -169,12 +170,20 @@ class VVSConnectionUpdater(QThread):
         else:
             return percentage
 
+    def getTimeOfNextUpdateAsSeconds(self):
+        return self.__nextUpdate
+
+    def getUpdateDelay(self):
+        return self.__updateDelay
+
     def getNextConnection(self):
         return self.__connectionData
 
 
-    updateProgress = pyqtProperty(float, getTimeToNextUpdateAsPercent, notify=updated)
+    #updateProgress = pyqtProperty(float, getTimeToNextUpdateAsPercent, notify=updated)
     nextConnection = pyqtProperty(QVVSConnectionData, getNextConnection, notify=updated)
+    nextUpdate = pyqtProperty(float, getTimeOfNextUpdateAsSeconds, notify=updated)
+    updateDelay = pyqtProperty(int, getUpdateDelay, notify=_)
 
 
 
