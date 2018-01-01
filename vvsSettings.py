@@ -4,6 +4,10 @@ from yaml import load, dump, YAMLError
 settings = {}
 
 __defaultSettings = {
+    'connections': [
+        ['5006021', 'X60', 'Leonberg Bf'], #Station ID, Line name, Direction
+        ['5006008', '92', 'Rotebühlplatz']
+        ],
     'enableDebugOutputs': False,
     'enableNotifications': False,
     'notificationTimings': [

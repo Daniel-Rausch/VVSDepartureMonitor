@@ -10,21 +10,17 @@ from datetime import datetime
 from vvsDepartureUpdaterThread import VVSConnectionUpdater
 from vvsDepartureAPI import connectionsData
 
-class VVSApp(QObject):
+class VVSQMLApp(QObject):
     QMLFILE = 'gui.qml'
-
-    #CONNECTIONS = (connectionsData['X60UniToLeo'],)
-    CONNECTIONS = (connectionsData['X60UniToLeo'], connectionsData['92UniToLeo'])
-    #CONNECTIONS = (connectionsData['X60UniToLeo'], connectionsData['92UniToLeo'], connectionsData['X60UniToLeo'])
     
-    def __init__(self):
+    def __init__(self, connections):
         super(QObject, self).__init__()
         self.app = QGuiApplication(sys.argv)
         self.view = QQuickView()
         self.view.setResizeMode(QQuickView.SizeRootObjectToView)
 
         self.con = []
-        for connection in self.CONNECTIONS:
+        for connection in connections:
             updaterThread = VVSConnectionUpdater(connection[0], connection[1], connection[2])
             updaterThread.start()
             self.con.append(updaterThread)
@@ -45,5 +41,4 @@ class VVSApp(QObject):
 
 
 if __name__ == "__main__":
-    c = VVSApp()
-    c.run()
+    print("This file is not supposed to be run as main!")
