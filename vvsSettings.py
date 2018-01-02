@@ -8,14 +8,20 @@ __defaultSettings = {
         ['5006021', 'X60', 'Leonberg Bf'], #Station ID, Line name, Direction
         ['5006008', '92', 'Rotebühlplatz']
         ],
+    'updateDelay': 10, #Time in seconds between updates
+    'notificationSettings':{
+        'enableNotifications': False,
+        'notifcationsForConnections': [0,1], #List of connections (identified by their position in the connections list) for which notifications should be enabled, starting from 0.
+        'notificationTimeout': 20, #Timeout in seconds
+        'showNotificationOnlyDuringPeriods': True,
+        'notificationPeriods': [
+            [8,0], #Start 1st period, represented as (hours, minutes)
+            [9,0], #End 1st period
+            [17,40], #Start 2nd period
+            [19,0], #End 2nd period
+        ],
+    },
     'enableDebugOutputs': False,
-    'enableNotifications': False,
-    'notificationTimings': [
-        "8:00", #Start 1st period
-        "9:15", #End 1st period
-        "17:00", #Start 2nd period
-        "19:00" #End 2nd period
-        ]
     }
 
 
@@ -23,6 +29,8 @@ __defaultSettings = {
 try:
     with open('settings.yml', 'r') as file:
         settings = load(file)
+        if settings is None:
+            settings = {}
 except YAMLError as e:
     print('Error: Your settings.yaml file could not be parsed. Using default config. Try fixing or deleting your settings.yml file to get rid of this error.')
     settings = __defaultSettings
@@ -36,6 +44,12 @@ else:
     for key in __defaultSettings:
         if key not in settings:
             settings[key] = __defaultSettings[key]
+
+    for key in __defaultSettings:
+        if type(__defaultSettings[key]) is dict:
+            for keyLayer2 in __defaultSettings[key]:
+                if keyLayer2 not in settings[key]:
+                    settings[key][keyLayer2] = __defaultSettings[key][keyLayer2]
 
 
 #print (settings)

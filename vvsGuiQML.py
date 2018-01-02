@@ -8,7 +8,9 @@ from PyQt5.QtQuick import QQuickView
 import sys
 from datetime import datetime
 from vvsDepartureUpdaterThread import VVSConnectionUpdater
-from vvsDepartureAPI import connectionsData
+from vvsNotifier import VVSNotifier
+from vvsSettings import settings
+
 
 class VVSQMLApp(QObject):
     QMLFILE = 'gui.qml'
@@ -21,7 +23,7 @@ class VVSQMLApp(QObject):
 
         self.con = []
         for connection in connections:
-            updaterThread = VVSConnectionUpdater(connection[0], connection[1], connection[2])
+            updaterThread = VVSConnectionUpdater(connection[0], connection[1], connection[2], updateDelay=settings['updateDelay'])
             updaterThread.start()
             self.con.append(updaterThread)
             #print(connection)
@@ -32,6 +34,9 @@ class VVSQMLApp(QObject):
 
         self.view.rootContext().setContextProperty('con', self.con)
         self.view.setSource(QUrl(self.QMLFILE))
+
+        #Setup notifications
+        VVSNotifier.setup(self.con)
 
         
 
