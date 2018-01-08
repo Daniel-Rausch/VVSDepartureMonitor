@@ -55,6 +55,14 @@ class VVSNotifier:
         if self.__connection.getNextConnection().errorInternet or self.__connection.getNextConnection().errorNotFound:
             self.__notification.close()
             return
+
+
+        #Show notification only if less than x minutes remaining. Always on if x <= 0.
+        if settingsNotify['showNotificationsForTimeRemaining'] > 0:
+            if self.__connection.getNextConnection().minutesToDeparture > settingsNotify['showNotificationsForTimeRemaining']:
+                self.__notification.close()
+                return
+            
         
         m = "In " + str(self.__connection.getNextConnection().minutesToDeparture) + " min\n" + "Delay " + str(self.__connection.getNextConnection().delay) + " min"
         self.__notification.message = m

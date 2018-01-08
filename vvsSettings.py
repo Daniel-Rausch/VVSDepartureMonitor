@@ -20,6 +20,7 @@ __defaultSettings = {
             [17,40], #Start 2nd period
             [19,0], #End 2nd period
         ],
+        'showNotificationsForTimeRemaining': 15 #Notifications are shown only if less than x minutes remain. Set to <=0 for always on.
     },
     'enableDebugOutputs': False,
     }
