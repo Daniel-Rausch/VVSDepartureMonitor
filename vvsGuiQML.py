@@ -41,7 +41,10 @@ class VVSQMLApp(QObject):
         
 
     def run(self):
-        self.view.show()
+        if settings['fullscreen']:
+            self.view.showFullScreen()
+        else:
+            self.view.show()
         sys.exit(self.app.exec_())
 
 

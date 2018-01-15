@@ -9,6 +9,7 @@ __defaultSettings = {
         ['5006008', '92', 'Rotebühlplatz']
         ],
     'updateDelay': 10, #Time in seconds between updates
+    'fullscreen': False,
     'notificationSettings':{
         'enableNotifications': False,
         'notifcationsForConnections': [0,1], #List of connections (identified by their position in the connections list) for which notifications should be enabled, starting from 0.
