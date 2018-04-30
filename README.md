@@ -24,7 +24,7 @@ This project allows you to retrieve departure times of buses and trains in the V
 
     TODO: package list
     
-### Where can I get the station IDs and direction names for the config? ###
+### Where can I get connection data for the config? ###
 
 * Use https://efa-api.asw.io/api/v1/station/ to get the station IDs.
-* Use https://efa-api.asw.io/api/v1/station/<stationid>/departures to get the direction names
+* Use https://efa-api.asw.io/api/v1/station/<stationid>/departures to get the remaining information that is necessary to identify a connection.
