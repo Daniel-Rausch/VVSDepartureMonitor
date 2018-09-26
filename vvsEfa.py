@@ -101,7 +101,8 @@ def parse_efa(efa):
                 actualDepartureTime = currentTime + timedelta(minutes=int(departure["countdown"]))
                 difference = actualDepartureTime - standardDepartureTime
                 delay = int(difference.total_seconds()/60)
-            delay = 0
+            else:
+                delay = 0
 
         departureObject = {
             "stopName": str(stopName),
