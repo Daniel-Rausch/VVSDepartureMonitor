@@ -99,10 +99,10 @@ def parse_efa(efa):
             delay = departure["servingLine"]["delay"]
         else:
             #VVS might not use the delay field but only specify the time remaining until the bus arrives. Manually compute the delay in this case.
-            #Note that this assumes that departureTime contains the original, undelayed departure time. This is true as of 26.09.18
-            if "countdown" in departure and "dateTime" in efa and departureTime is not None:
+            #Note that this assumes that "dateTime" in departure contains the original, undelayed departure time. This is true as of 26.09.18
+            if "countdown" in departure and "dateTime" in efa and "dateTime" in departure:
                 currentTime = datetime(**{str(k):int(v) for k, v in efa["dateTime"].items() if k in ['day', 'month', 'year', 'hour', 'minute']})
-                standardDepartureTime = departureTime
+                standardDepartureTime = datetime(**{str(k):int(v) for k, v in departure["dateTime"].items() if k != 'weekday'})
                 actualDepartureTime = currentTime + timedelta(minutes=int(departure["countdown"]))
                 difference = actualDepartureTime - standardDepartureTime
                 delay = int(difference.total_seconds()/60)
