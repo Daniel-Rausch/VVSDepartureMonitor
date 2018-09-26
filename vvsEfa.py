@@ -100,7 +100,7 @@ def parse_efa(efa):
         else:
             #VVS might not use the delay field but only specify the time remaining until the bus arrives. Manually compute the delay in this case.
             #Note that this assumes that departureTime contains the original, undelayed departure time. This is true as of 26.09.18
-            if "countdown" in departure and "dateTime" in efa and departureTime not None:
+            if "countdown" in departure and "dateTime" in efa and departureTime is not None:
                 currentTime = datetime(**{str(k):int(v) for k, v in efa["dateTime"].items() if k in ['day', 'month', 'year', 'hour', 'minute']})
                 standardDepartureTime = departureTime
                 actualDepartureTime = currentTime + timedelta(minutes=int(departure["countdown"]))
