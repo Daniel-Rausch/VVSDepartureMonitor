@@ -110,6 +110,7 @@ def parse_efa(efa):
                 #Update departure time to the delayed value
                 departureTime = actualDepartureTime
             else:
+                logging.warning(str(datetime.now()) + ": Could not retrieve or compute the delay for line \"" + str(number) + "\" from \"" + str(stopName) + "\" to \"" + str(direction) + "\" at " + str(departureTime) + ".")
                 delay = 0
 
         departureObject = {

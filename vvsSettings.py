@@ -1,5 +1,7 @@
 from yaml import load, dump, YAMLError
 
+import logging
+
 
 settings = {}
 
@@ -24,6 +26,7 @@ __defaultSettings = {
         'showNotificationsForTimeRemaining': 15 #Notifications are shown only if less than x minutes remain. Set to <=0 for always on.
     },
     'enableDebugOutputs': False,
+    'loggingLevel': 'WARNING'
     }
 
 
@@ -34,7 +37,7 @@ try:
         if settings is None:
             settings = {}
 except YAMLError as e:
-    print('Error: Your settings.yml file could not be parsed. Using default config. Try fixing or deleting your settings.yml file to get rid of this error.')
+    logging.error('Your settings.yml file could not be parsed. Using default config. Try fixing or deleting your settings.yml file to get rid of this error.')
     settings = __defaultSettings
 except FileNotFoundError as e:
     with open('settings.yml', 'w') as file:

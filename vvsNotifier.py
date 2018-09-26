@@ -1,5 +1,6 @@
 from PyQt5.QtCore import pyqtSignal
 from datetime import (datetime, time)
+import logging
 
 from vvsSettings import settings
 from vvsDepartureUpdaterThread import (VVSConnectionUpdater, QVVSConnectionData)
@@ -11,7 +12,7 @@ try:
     notify2.init('VVS Monitor')
 except:
     if settingsNotify['enableNotifications']:
-        print("Failed to load notify2 library, so the notification feature will be disabled. Note that notifications are supported on Linux only.")
+        logging.error("Failed to load notify2 library, so the notification feature will be disabled. Note that notifications are supported on Linux only.")
         settingsNotify['enableNotifications'] = False
 
 
