@@ -34,7 +34,7 @@ try:
         if settings is None:
             settings = {}
 except YAMLError as e:
-    print('Error: Your settings.yaml file could not be parsed. Using default config. Try fixing or deleting your settings.yml file to get rid of this error.')
+    print('Error: Your settings.yml file could not be parsed. Using default config. Try fixing or deleting your settings.yml file to get rid of this error.')
     settings = __defaultSettings
 except FileNotFoundError as e:
     with open('settings.yml', 'w') as file:
