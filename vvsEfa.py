@@ -84,6 +84,7 @@ def parse_efa(efa):
         number = departure["servingLine"]["number"]
         direction = departure["servingLine"]["direction"]
 
+        
         if "realDateTime" in departure:
             realDateTime = departure["realDateTime"]
         elif "dateTime" in departure:
@@ -91,16 +92,23 @@ def parse_efa(efa):
         else:
             realDateTime = None
 
+        departureTime = datetime(**{str(k):int(v) for k, v in realDateTime.items() if k != 'weekday'})
+
+        
         if "servingLine" in departure and "delay" in departure["servingLine"]:
             delay = departure["servingLine"]["delay"]
         else:
             #VVS might not use the delay field but only specify the time remaining until the bus arrives. Manually compute the delay in this case.
-            if "countdown" in departure and "dateTime" in efa:
+            #Note that this assumes that departureTime contains the original, undelayed departure time. This is true as of 26.09.18
+            if "countdown" in departure and "dateTime" in efa and departureTime not None:
                 currentTime = datetime(**{str(k):int(v) for k, v in efa["dateTime"].items() if k in ['day', 'month', 'year', 'hour', 'minute']})
-                standardDepartureTime = datetime(**{str(k):int(v) for k, v in realDateTime.items() if k != 'weekday'})
+                standardDepartureTime = departureTime
                 actualDepartureTime = currentTime + timedelta(minutes=int(departure["countdown"]))
                 difference = actualDepartureTime - standardDepartureTime
                 delay = int(difference.total_seconds()/60)
+
+                #Update departure time to the delayed value
+                departureTime = actualDepartureTime
             else:
                 delay = 0
 
@@ -108,7 +116,7 @@ def parse_efa(efa):
             "stopName": str(stopName),
             "number": str(number),
             "direction": str(direction),
-            "departureTime": datetime(**{str(k):int(v) for k, v in realDateTime.items() if k != 'weekday'}),
+            "departureTime": departureTime,
             "delay": int(delay),
             #"stationCoordinates": latlon
         }
