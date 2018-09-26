@@ -1,10 +1,12 @@
 #This code was originally taken from the metaEFA project. See https://github.com/opendata-stuttgart/metaEFA.
 #It has been modified to fit the specific needs of this project.
 
+#import json
+#import yaml
+
 import logging
 import requests
-from datetime import datetime
-#import yaml
+from datetime import datetime, timedelta
 
 def get_EFA_from_VVS(station_id):
     """
@@ -30,7 +32,8 @@ def get_EFA_from_VVS(station_id):
     outputFormat = 'json'
     coordOutputFormat = 'WGS84[DD.ddddd]'
 
-    url = 'http://www2.vvs.de/vvs/widget/XML_DM_REQUEST?'
+    url = 'http://www3.vvs.de/mngvvs/XML_DM_REQUEST?'
+    #url = 'http://www2.vvs.de/vvs/widget/XML_DM_REQUEST?'
     url += 'zocationServerActive={:d}'.format(zocationServerActive)
     url += '&lsShowTrainsExplicit{:d}'.format(lsShowTrainsExplicit)
     url += '&stateless={:d}'.format(stateless)
@@ -91,6 +94,13 @@ def parse_efa(efa):
         if "servingLine" in departure and "delay" in departure["servingLine"]:
             delay = departure["servingLine"]["delay"]
         else:
+            #VVS might not use the delay field but only specify the time remaining until the bus arrives. Manually compute the delay in this case.
+            if "countdown" in departure and "dateTime" in efa:
+                currentTime = datetime(**{str(k):int(v) for k, v in efa["dateTime"].items() if k in ['day', 'month', 'year', 'hour', 'minute']})
+                standardDepartureTime = datetime(**{str(k):int(v) for k, v in realDateTime.items() if k != 'weekday'})
+                actualDepartureTime = currentTime + timedelta(minutes=int(departure["countdown"]))
+                difference = actualDepartureTime - standardDepartureTime
+                delay = int(difference.total_seconds()/60)
             delay = 0
 
         departureObject = {
@@ -113,4 +123,6 @@ if __name__ == "__main__":
     print("this file is not intended to be run as main.")
     x = get_EFA_from_VVS(5006021)
     #print (yaml.dump(x))
-    print (parse_efa(x))
+    #print (json.dumps(x["departureList"][1], sort_keys=True, indent=4))
+    #print (parse_efa(x))
+    #print (yaml.dump(parse_efa(x)))
