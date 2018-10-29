@@ -1,8 +1,8 @@
 #coding: utf-8
 import logging
 import requests
-import datetime
 import time
+from datetime import datetime
 from vvsEfa import get_EFA_from_VVS, parse_efa
 from vvsSettings import settings
 
@@ -54,7 +54,7 @@ class VVSConnection:
 
 
     def getMinutesToDeparture(self):
-        currentTime = datetime.datetime.now()
+        currentTime = datetime.now()
         #print(currentTime)
         #print(self.departure)
 
