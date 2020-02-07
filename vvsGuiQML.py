@@ -1,5 +1,5 @@
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtCore import (pyqtProperty, pyqtSignal, QDateTime, QObject, QTimer, QUrl, QThread, QVariant)
+from PyQt5.QtCore import (pyqtProperty, pyqtSignal, QDateTime, QObject, QTimer, QUrl, QThread, QVariant, Qt)
 from PyQt5.QtWidgets import QStyleOptionGraphicsItem
 from PyQt5.QtWidgets import QWidget
 from PyQt5.QtWidgets import QGraphicsItem
@@ -20,6 +20,8 @@ class VVSQMLApp(QObject):
         self.app = QGuiApplication(sys.argv)
         self.view = QQuickView()
         self.view.setResizeMode(QQuickView.SizeRootObjectToView)
+        if settings['alwaysOnTop']:
+            self.view.setFlags(Qt.WindowStaysOnTopHint)
 
         self.con = []
         for connection in connections:

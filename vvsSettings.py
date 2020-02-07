@@ -12,6 +12,7 @@ __defaultSettings = {
         ],
     'updateDelay': 10, #Time in seconds between updates
     'fullscreen': False,
+    'alwaysOnTop': True,
     'notificationSettings':{
         'enableNotifications': False,
         'notifcationsForConnections': [0,1], #List of connections (identified by their position in the connections list) for which notifications should be enabled, starting from 0.
