@@ -7,8 +7,8 @@ settings = {}
 
 __defaultSettings = {
     'connections': [
-        ['5006021', 'X60', 'Leonberg Bf'], #Station ID, Line name, Direction
-        ['5006008', '92', 'Rotebühlplatz']
+        ['5006021', 'X60', 'Leonberg Bf'], #Station ID, Line name, Direction. Direction can also be an array of several strings; considers a connection if it matches at least one of the direction strings.
+        ['5006008', '92', ['Rotebühlplatz', 'Leonberg - Rotebühlpl.']]
         ],
     'updateDelay': 10, #Time in seconds between updates
     'fullscreen': False,

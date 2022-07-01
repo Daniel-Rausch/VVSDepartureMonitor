@@ -10,7 +10,7 @@ from vvsSettings import settings
 
 connectionsData= {
     'X60UniToLeo': ['5006021', 'X60', 'Leonberg Bf'],
-    '92UniToLeo': ['5006008', '92', 'Rotebühlplatz']
+    '92UniToLeo': ['5006008', '92', ['Rotebühlplatz', 'Leonberg - Rotebühlpl.']]
     }
 
 
@@ -66,6 +66,10 @@ class VVSConnection:
     #Throws InternetConnectionError and NoVVSConnectionFoundError
     @staticmethod
     def getNextConnectionFromStation(station, line, direction):
+        #Make sure that direction is an array if only a single direction is given
+        if not isinstance(direction, list):
+            direction = [direction]
+
         debug = settings['enableDebugOutputs']
         #Get data about station from online API
         data = []
@@ -82,7 +86,7 @@ class VVSConnection:
             #print(connectionDict)
             
             #Check whether connection matches the requested line and direction
-            if str(connectionDict['number']) == line and str(connectionDict['direction']) == direction:
+            if str(connectionDict['number']) == line and str(connectionDict['direction']) in direction:
                 
                 #Make a sanity check to filter out past connections
                 newVVSConnectionObject = VVSConnection(connectionDict)
@@ -105,6 +109,12 @@ class VVSConnection:
 
 def main():
     print("This file is not supposed to be run as main!")
+
+    # data = parse_efa(get_EFA_from_VVS(connectionsData["92UniToLeo"][0]))
+    # for d in data:
+    #     if d["number"] == "92":
+    #         print(d)
+    # return
     
     while True:
         try:
