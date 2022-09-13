@@ -1,4 +1,4 @@
 *.qmlc
 .vscode
 *pycache*
-settings.yml
+settings*.yml
