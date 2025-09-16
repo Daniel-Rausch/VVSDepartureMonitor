@@ -1,4 +1,4 @@
-from yaml import load, dump, YAMLError
+from yaml import safe_load, dump, YAMLError
 
 import logging
 
@@ -34,7 +34,7 @@ __defaultSettings = {
 #Read the settings.yml file
 try:
     with open('settings.yml', 'r') as file:
-        settings = load(file)
+        settings = safe_load(file)
         if settings is None:
             settings = {}
 except YAMLError as e:
